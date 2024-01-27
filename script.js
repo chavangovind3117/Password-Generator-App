@@ -31,6 +31,11 @@ function handleSlider() {
     inputSlider.style.backgroundSize = ((passwordLength - min) * 100 / (max - min)) + "% 100%"
 }
 
+inputSlider.addEventListener('input', (e) => {
+    passwordLength = e.target.value;
+    handleSlider();
+});
+
 // set indicator
 
 function setIndicator(color) {
@@ -60,6 +65,8 @@ function generateSymbol() {
     return symbols.charAt(randNum);
 }
 
+// Strength calculation
+
 function calcStrength() {
     let hasUpper = false;
     let hasLower = false;
@@ -83,22 +90,7 @@ function calcStrength() {
     }
 }
 
-async function copyContent() {
-    try {
-        await navigator.clipboard.writeText(passwordDisplay.value);
-        copyMsg.innerText = "copied";
-    }
-    catch (e) {
-        copyMsg.innerText = "failed";
-    }
-
-    // to make copy span visible
-    copyMsg.classList.add("active");
-
-    setTimeout(() => {
-        copyMsg.classList.remove("active");
-    }, 2000);
-}
+// Array Shuffling function
 
 function shufflePassword(array) {
     //Fisher Yates Method
@@ -135,19 +127,10 @@ allCheckBox.forEach((checkbox) => {
     checkbox.addEventListener('change', handleCheckBoxChange());
 });
 
-inputSlider.addEventListener('input', (e) => {
-    passwordLength = e.target.value;
-    handleSlider();
-});
-
-copyBtn.addEventListener('click', () => {
-    if (passwordDisplay.value)
-        copyContent();
-});
+// Generate Password
 
 generateBtn.addEventListener('click', () => {
 
-    console.log("second");
     // none of the checkbox is selected
     // if (checkCount == 0) {
     //     return;
@@ -158,8 +141,6 @@ generateBtn.addEventListener('click', () => {
         handleSlider();
     }
 
-    // let's find new password
-    // remove old password
     password = "";
 
     let funcArr = [];
@@ -189,7 +170,7 @@ generateBtn.addEventListener('click', () => {
         console.log("randIndex" + randIndex);
         password += funcArr[randIndex]();
     }
-    console.log("remaining additiond");
+    console.log("remaining addition");
 
     // shuffle password
     password = shufflePassword(Array.from(password));
@@ -197,7 +178,31 @@ generateBtn.addEventListener('click', () => {
     //show in UI
     passwordDisplay.value = password;
 
+
     // show strength
     calcStrength();
 
+
+});
+
+async function copyContent() {
+    try {
+        await navigator.clipboard.writeText(passwordDisplay.value);
+        copyMsg.innerText = "copied";
+    }
+    catch (e) {
+        copyMsg.innerText = "failed";
+    }
+
+    // to make copy span visible
+    copyMsg.classList.add("active");
+
+    setTimeout(() => {
+        copyMsg.classList.remove("active");
+    }, 2000);
+}
+
+copyBtn.addEventListener('click', () => {
+    if (passwordDisplay.value)
+        copyContent();
 });
